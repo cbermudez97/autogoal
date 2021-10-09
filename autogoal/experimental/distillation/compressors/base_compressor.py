@@ -1,6 +1,11 @@
-class ModelCompressorBase:
-    def can_compress(self, model) -> bool:
-        return False
+import abc
 
+
+class ModelCompressorBase(abc.ABC):
+    @abc.abstractmethod
+    def can_compress(self, model) -> bool:
+        pass
+
+    @abc.abstractmethod
     def compress(self, model):
-        raise NotImplementedError("The 'compress' method must be implemented")
+        pass
