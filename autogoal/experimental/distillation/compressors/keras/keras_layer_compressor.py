@@ -5,7 +5,7 @@ from tensorflow.python.keras.layers.convolutional import Conv
 from .utils import dispatcher
 
 
-class KerasLayerCompressor:
+class _KerasLayerCompressor:
     def __init__(self, ratio=0.5):
         self.ratio = ratio
 
