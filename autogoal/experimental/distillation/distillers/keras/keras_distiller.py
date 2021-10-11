@@ -56,6 +56,7 @@ class KerasDistiller(AlgorithmDistillerBase):
             try:
                 candidate_model = compressor.compress(teacher_model)
                 distiller = _Distiller(student=candidate_model, teacher=teacher_model)
+                candidate_model = distiller.student
                 distiller.compile(
                     optimizers.RMSprop(),
                     ["accuracy"],
@@ -94,6 +95,7 @@ class KerasDistiller(AlgorithmDistillerBase):
     def build_keras_classifier_from(
         self, original: KerasClassifier, new_model: Model
     ) -> KerasClassifier:
+        # TODO: Improve the algorithm construction
         classifier = KerasClassifier(original.optimizer, grammar=original._grammar)
         classifier._model = new_model
         classifier._classes = original._classes
