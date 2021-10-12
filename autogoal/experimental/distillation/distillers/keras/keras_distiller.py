@@ -31,12 +31,13 @@ class KerasDistiller(AlgorithmDistillerBase):
     def distill(
         self,
         algorithm: KerasClassifier,
-        train_x,
-        train_y,
-        test_x,
-        test_y,
+        train_inputs: dict,
+        test_inputs: dict,
         registry: List = None,
     ) -> KerasClassifier:
+        train_x, train_y = train_inputs.values()
+        test_x, test_y = test_inputs.values()
+
         if not self.can_distill(algorithm):
             raise ValueError("Param 'algorithm' must be a KerasClassifier algorithm")
 

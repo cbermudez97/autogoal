@@ -1,4 +1,5 @@
 import abc
+from typing import List
 
 from autogoal.kb import AlgorithmBase
 
@@ -10,6 +11,10 @@ class AlgorithmDistillerBase(abc.ABC):
 
     @abc.abstractmethod
     def distill(
-        self, algorithm: AlgorithmBase, train_x, train_y, test_x, test_y,
+        self,
+        algorithm: AlgorithmBase,
+        train_inputs: dict,
+        test_inputs: dict,
+        registry: List,
     ) -> AlgorithmBase:
         pass
