@@ -39,7 +39,7 @@ class _Distiller(Model):
             student_predictions = self.student(x, training=True)
             student_loss = self.student_loss_fn(y, student_predictions)
             distillation_loss = self.calculate_distillation_loss(x, y)
-            loss = student_loss + self.alpha * distillation_loss
+            loss = student_loss + distillation_loss
         trainable_vars = self.student.trainable_variables
         gradients = tape.gradient(loss, trainable_vars)
         self.optimizer.apply_gradients(zip(gradients, trainable_vars))
@@ -53,7 +53,7 @@ class _Distiller(Model):
     def calculate_distillation_loss(self, x, y):
         teacher_predictions = self.teacher_no_act(x, training=False)
         student_predictions_no_act = self.student_no_act(x, training=True)
-        distillation_loss = self.distillation_loss_fn(
+        distillation_loss = self.alpha * self.distillation_loss_fn(
             softmax(teacher_predictions / self.temperature, axis=1),
             softmax(student_predictions_no_act / self.temperature, axis=1),
         )
