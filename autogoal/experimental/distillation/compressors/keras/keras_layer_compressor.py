@@ -1,6 +1,5 @@
 from typing import Callable
-from tensorflow.keras.layers import Layer, Dense
-from tensorflow.python.keras.layers.convolutional import Conv
+from tensorflow.keras.layers import Layer, Dense, Conv1D, Conv2D, Conv3D
 
 from .utils import dispatcher
 
@@ -35,8 +34,19 @@ class _KerasLayerCompressor:
         config["units"] *= self.ratio
         return layer.__class__.from_config(config)
 
-    @dispatcher.when(Conv)
-    def compress(self, layer):
+    @dispatcher.when(Conv1D)
+    def compress(self, layer: Conv1D):
+        return self.compress_conv(layer)
+
+    @dispatcher.when(Conv2D)
+    def compress(self, layer: Conv2D):
+        return self.compress_conv(layer)
+
+    @dispatcher.when(Conv3D)
+    def compress(self, layer: Conv3D):
+        return self.compress_conv(layer)
+
+    def compress_conv(self, layer):
         config = layer.get_config()
         config["filters"] *= self.ratio
         return layer.__class__.from_config(config)

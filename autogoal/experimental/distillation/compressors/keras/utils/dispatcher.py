@@ -68,9 +68,15 @@ class Dispatcher(object):
             issub = issubclass
             t = self.targets
             ks = t.keys()
-            ans = [t[k](*args, **kw) for k in ks if issub(typ, k)]
-            if len(ans) == 1:
-                return ans.pop()
+            btyp = None
+            for k in ks:
+                if btyp is None and issub(typ, k):
+                    btyp = k
+                elif not btyp is None and issub(typ, k) and issub(k, btyp):
+                    btyp = k
+            ans = None
+            if not btyp is None:
+                ans = t[btyp](*args, **kw)
             return ans
 
     def add_target(self, typ, target):
