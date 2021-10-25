@@ -1,5 +1,6 @@
 from typing import List
 
+from autogoal.grammar._graph import Graph
 from autogoal.contrib.keras import KerasClassifier
 from autogoal.experimental.distillation.compressors import find_compressors
 from autogoal.experimental.distillation.compressors.base_compressor import (
@@ -109,4 +110,12 @@ class KerasDistiller(AlgorithmDistillerBase):
         classifier._classes = original._classes
         classifier._inverse_classes = original._inverse_classes
         classifier.eval()
+        graph: Graph = Graph()
+        if not classifier._graph is None:
+            original_order = classifier._graph.build_order()
+            nodes = []
+            for layer, _ in original_order:
+                nodes.insert(0, new_model.get_layer(name=layer.name))
+            graph.add_nodes_from(nodes)
+        classifier._graph = graph
         return classifier
