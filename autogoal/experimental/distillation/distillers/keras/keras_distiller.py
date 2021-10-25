@@ -12,6 +12,7 @@ from autogoal.kb import AlgorithmBase
 from tensorflow.keras import Model
 from tensorflow.keras import losses
 from tensorflow.keras import optimizers
+from tensorflow.keras.utils import to_categorical
 from tensorflow.python.keras.callbacks import EarlyStopping, TerminateOnNaN
 
 from .distiller import _Distiller
@@ -40,6 +41,12 @@ class KerasDistiller(AlgorithmDistillerBase):
 
         if not self.can_distill(algorithm):
             raise ValueError("Param 'algorithm' must be a KerasClassifier algorithm")
+
+        if algorithm._classes is None:
+            raise ValueError("Param 'algorithm' must be trained before distillation")
+
+        train_y = to_categorical([algorithm._classes[tag] for tag in train_y])
+        test_y = to_categorical([algorithm._classes[tag] for tag in test_y])
 
         if not registry:
             registry = find_compressors()
