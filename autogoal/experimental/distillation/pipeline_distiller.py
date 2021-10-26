@@ -2,6 +2,7 @@ from typing import List
 from autogoal.kb import Pipeline, AlgorithmBase
 from autogoal.kb._algorithm import build_input_args
 from autogoal.experimental.distillation.distillers import find_distillers
+from autogoal.experimental.distillation.compressors import find_compressors
 from autogoal.experimental.distillation.distillers.base_distiller import (
     AlgorithmDistillerBase,
 )
@@ -13,7 +14,8 @@ class PipelineDistiller:
         pipeline: Pipeline,
         train_inputs,
         test_inputs,
-        registry: List = None,
+        distillers_registry: List = None,
+        compressors_registry: List = None,
         compression_ratio: float = 0.5,
     ) -> Pipeline:
         # Build train data
@@ -29,8 +31,11 @@ class PipelineDistiller:
             test_data[t] = i
 
         # Build registry
-        if not registry:
-            registry = find_distillers()
+        if not distillers_registry:
+            distillers_registry = find_distillers()
+
+        if not compressors_registry:
+            compressors_registry = find_compressors()
 
         destilled_pipeline = Pipeline([], input_types=pipeline.input_types)
 
@@ -42,14 +47,14 @@ class PipelineDistiller:
             train_args = build_input_args(algorithm, train_data)
             test_args = build_input_args(algorithm, test_data)
 
-            for distiller_cls in registry:
+            for distiller_cls in distillers_registry:
                 # Try distilling algorithm
                 distiller: AlgorithmDistillerBase = distiller_cls(
                     compression_ratio=compression_ratio
                 )
                 if distiller.can_distill(algorithm):
                     distilled_algorithm = distiller.distill(
-                        algorithm, train_args, test_args
+                        algorithm, train_args, test_args, registry=compressors_registry,
                     )
                     break
 
