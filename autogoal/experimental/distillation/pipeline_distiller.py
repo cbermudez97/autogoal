@@ -9,7 +9,12 @@ from autogoal.experimental.distillation.distillers.base_distiller import (
 
 class PipelineDistiller:
     def distill(
-        self, pipeline: Pipeline, train_inputs, test_inputs, registry: List = None,
+        self,
+        pipeline: Pipeline,
+        train_inputs,
+        test_inputs,
+        registry: List = None,
+        compression_ratio: float = 0.5,
     ) -> Pipeline:
         # Build train data
         train_data = {}
@@ -39,7 +44,9 @@ class PipelineDistiller:
 
             for distiller_cls in registry:
                 # Try distilling algorithm
-                distiller: AlgorithmDistillerBase = distiller_cls()
+                distiller: AlgorithmDistillerBase = distiller_cls(
+                    compression_ratio=compression_ratio
+                )
                 if distiller.can_distill(algorithm):
                     distilled_algorithm = distiller.distill(
                         algorithm, train_args, test_args

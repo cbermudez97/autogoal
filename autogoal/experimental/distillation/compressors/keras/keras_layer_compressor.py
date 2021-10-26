@@ -5,8 +5,8 @@ from .utils import dispatcher
 
 
 class _KerasLayerCompressor:
-    def __init__(self, ratio=0.5):
-        self.ratio = ratio
+    def __init__(self, compression_ratio: float = 0.5):
+        self.ratio = compression_ratio
 
     def __call__(self, is_output: Callable = lambda x: False):
         def compressor_fn(layer: Layer) -> Layer:

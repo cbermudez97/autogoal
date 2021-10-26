@@ -8,9 +8,11 @@ from .keras_layer_compressor import _KerasLayerCompressor
 
 
 class KerasModelCompressor(ModelCompressorBase):
-    def __init__(self, ratio=0.5):
-        self.ratio = ratio
-        self.layer_compressor = _KerasLayerCompressor(ratio=ratio)
+    def __init__(self, compression_ratio: float = 0.5):
+        super().__init__(compression_ratio=compression_ratio)
+        self.layer_compressor = _KerasLayerCompressor(
+            compression_ratio=compression_ratio
+        )
 
     def can_compress(self, model):
         return isinstance(model, Model)

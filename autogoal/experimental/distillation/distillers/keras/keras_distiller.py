@@ -21,9 +21,9 @@ from .distiller import _Distiller
 
 class KerasDistiller(AlgorithmDistillerBase):
     def __init__(
-        self, epochs=10, early_stop=3,
+        self, epochs: int = 10, early_stop: int = 3, compression_ratio: float = 0.5,
     ):
-        super().__init__()
+        super().__init__(compression_ratio=compression_ratio)
         self._epochs = epochs
         self._early_stop = early_stop
 
