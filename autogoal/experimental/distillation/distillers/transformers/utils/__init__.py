@@ -1,1 +1,1 @@
-from .pre_trained_names import get_pre_trained_name
+from .pre_trained_names import get_pre_trained_name, build_pre_trained_name
