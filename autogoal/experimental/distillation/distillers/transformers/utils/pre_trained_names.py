@@ -30,4 +30,3 @@ def build_pre_trained_name(name: str, use_squad=False) -> str:
     if use_squad:
         pre_trained_name += "distilled-squad"
     return pre_trained_name
-
