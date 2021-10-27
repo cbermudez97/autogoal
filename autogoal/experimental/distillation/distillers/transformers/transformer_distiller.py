@@ -6,7 +6,11 @@ from autogoal.experimental.distillation.distillers.base_distiller import (
 from transformers import DistilBertModel, DistilBertTokenizer
 from typing import List
 
-from .utils import get_pre_trained_name
+from .utils import (
+    get_pre_trained_name,
+    get_pre_trained_model,
+    get_pre_trained_tokenizer,
+)
 
 
 class BertEmbeddingDistiller(AlgorithmDistillerBase):
@@ -30,11 +34,10 @@ class BertEmbeddingDistiller(AlgorithmDistillerBase):
             model_name = model.config.name_or_path
             distilled_model_name = get_pre_trained_name(model_name)
             if distilled_model_name:
-                distilled_model = DistilBertModel.from_pretrained(distilled_model_name)
-                distilled_tokenizer = DistilBertTokenizer.from_pretrained(
-                    distilled_model_name
-                )
-            raise Exception("No pre-trained model found.")
+                distilled_model = get_pre_trained_model(distilled_model_name)
+                distilled_tokenizer = get_pre_trained_tokenizer(distilled_model_name)
+            else:
+                raise Exception("No pre-trained model found.")
         except:
             # TODO: Implement custom distillation process
             pass
