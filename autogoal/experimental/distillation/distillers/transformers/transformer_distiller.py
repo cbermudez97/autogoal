@@ -3,7 +3,6 @@ from autogoal.contrib.transformers import BertEmbedding
 from autogoal.experimental.distillation.distillers.base_distiller import (
     AlgorithmDistillerBase,
 )
-from transformers import DistilBertModel, DistilBertTokenizer
 from typing import List
 
 from .utils import (
