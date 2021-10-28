@@ -1,10 +1,13 @@
-from typing import List
+from typing import List, Type
 from autogoal.kb import Pipeline, AlgorithmBase
 from autogoal.kb._algorithm import build_input_args
 from autogoal.experimental.distillation.distillers import find_distillers
 from autogoal.experimental.distillation.compressors import find_compressors
 from autogoal.experimental.distillation.distillers.base_distiller import (
     AlgorithmDistillerBase,
+)
+from autogoal.experimental.distillation.compressors.base_compressor import (
+    ModelCompressorBase,
 )
 
 
@@ -14,8 +17,8 @@ class PipelineDistiller:
         pipeline: Pipeline,
         train_inputs,
         test_inputs,
-        distillers_registry: List = None,
-        compressors_registry: List = None,
+        distillers_registry: List[Type[AlgorithmDistillerBase]] = None,
+        compressors_registry: List[Type[ModelCompressorBase]] = None,
         compression_ratio: float = 0.5,
     ) -> Pipeline:
         # Build train data

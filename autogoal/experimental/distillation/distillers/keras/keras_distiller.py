@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Type
 
 from autogoal.grammar._graph import Graph
 from autogoal.contrib.keras import KerasClassifier
@@ -35,7 +35,7 @@ class KerasDistiller(AlgorithmDistillerBase):
         algorithm: KerasClassifier,
         train_inputs: dict,
         test_inputs: dict,
-        registry: List = None,
+        registry: List[Type[ModelCompressorBase]] = None,
     ) -> KerasClassifier:
         train_x, train_y = train_inputs.values()
         test_x, test_y = test_inputs.values()
@@ -57,7 +57,9 @@ class KerasDistiller(AlgorithmDistillerBase):
         compressed_model: Model = None
         evaluation_score = 0.0
         for compressor_cls in registry:
-            compressor: ModelCompressorBase = compressor_cls()
+            compressor: ModelCompressorBase = compressor_cls(
+                compression_ratio=self.compression_ratio
+            )
             candidate_model: Model = None
             candidate_score = 0.0
             if not compressor.can_compress(teacher_model):
