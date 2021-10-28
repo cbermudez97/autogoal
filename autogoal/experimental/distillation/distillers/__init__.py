@@ -24,6 +24,13 @@ def find_distillers(include=None, exclude=None, modules=None):
         except ImportError as e:
             pass
 
+        try:
+            from autogoal.experimental.distillation.distillers import transformers
+
+            modules.append(transformers)
+        except ImportError as e:
+            pass
+
     for module in modules:
         for _, cls in inspect.getmembers(module, inspect.isclass):
             if not issubclass(cls, AlgorithmDistillerBase):
