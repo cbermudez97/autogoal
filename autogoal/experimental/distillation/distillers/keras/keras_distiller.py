@@ -1,4 +1,4 @@
-from typing import List, Type
+from typing import Any, Dict, List, Type
 
 from autogoal.grammar._graph import Graph
 from autogoal.contrib.keras import KerasClassifier
@@ -21,11 +21,18 @@ from .distiller import _Distiller
 
 class KerasDistiller(AlgorithmDistillerBase):
     def __init__(
-        self, epochs: int = 10, early_stop: int = 3, compression_ratio: float = 0.5,
+        self,
+        epochs: int = 10,
+        early_stop: int = 3,
+        compression_ratio: float = 0.5,
+        distiller_alpha: float = 0.9,
+        distiller_temperature: float = 1.0,
     ):
         super().__init__(compression_ratio=compression_ratio)
         self._epochs = epochs
         self._early_stop = early_stop
+        self._distiller_alpha = distiller_alpha
+        self._distiller_temperature = distiller_temperature
 
     def can_distill(self, algorithm: AlgorithmBase) -> bool:
         return isinstance(algorithm, KerasClassifier)
@@ -36,6 +43,7 @@ class KerasDistiller(AlgorithmDistillerBase):
         train_inputs: dict,
         test_inputs: dict,
         registry: List[Type[ModelCompressorBase]] = None,
+        compressors_kwargs: Dict[Type[ModelCompressorBase], Dict[str, Any]] = {},
     ) -> KerasClassifier:
         train_x, train_y = train_inputs.values()
         test_x, test_y = test_inputs.values()
@@ -57,9 +65,8 @@ class KerasDistiller(AlgorithmDistillerBase):
         compressed_model: Model = None
         evaluation_score = 0.0
         for compressor_cls in registry:
-            compressor: ModelCompressorBase = compressor_cls(
-                compression_ratio=self.compression_ratio
-            )
+            compressor_kwargs = compressors_kwargs.get(compressor_cls, {})
+            compressor: ModelCompressorBase = compressor_cls(**compressor_kwargs,)
             candidate_model: Model = None
             candidate_score = 0.0
             if not compressor.can_compress(teacher_model):
@@ -73,8 +80,8 @@ class KerasDistiller(AlgorithmDistillerBase):
                     ["accuracy"],
                     losses.categorical_crossentropy,
                     losses.categorical_crossentropy,
-                    alpha=0.9,
-                    temperature=1,
+                    alpha=self._distiller_alpha,
+                    temperature=self._distiller_temperature,
                 )
                 distiller.fit(
                     train_x,

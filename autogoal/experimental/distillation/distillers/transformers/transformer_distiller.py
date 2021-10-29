@@ -3,7 +3,10 @@ from autogoal.contrib.transformers import BertEmbedding
 from autogoal.experimental.distillation.distillers.base_distiller import (
     AlgorithmDistillerBase,
 )
-from typing import List
+from autogoal.experimental.distillation.compressors.base_compressor import (
+    ModelCompressorBase,
+)
+from typing import List, Type
 
 from .utils import (
     get_pre_trained_name,
@@ -13,6 +16,9 @@ from .utils import (
 
 
 class BertEmbeddingDistiller(AlgorithmDistillerBase):
+    def __init__(self) -> None:
+        super().__init__()
+
     def can_distill(self, algorithm: AlgorithmBase) -> bool:
         # TODO: Add other use cases
         return self._is_seq_alg(algorithm)
@@ -38,7 +44,7 @@ class BertEmbeddingDistiller(AlgorithmDistillerBase):
         algorithm: AlgorithmBase,
         train_inputs: dict,
         test_inputs: dict,
-        registry: List = None,
+        registry: List[Type[ModelCompressorBase]] = None,
     ) -> AlgorithmBase:
         if not self.can_distill(algorithm):
             raise ValueError("Param 'algorithm' must use a BertEmbedding instance")
