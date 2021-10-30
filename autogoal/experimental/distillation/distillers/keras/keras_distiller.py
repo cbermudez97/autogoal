@@ -10,9 +10,7 @@ from autogoal.experimental.distillation.distillers.base_distiller import (
     AlgorithmDistillerBase,
 )
 from autogoal.kb import AlgorithmBase
-from tensorflow.keras import Model
-from tensorflow.keras import losses
-from tensorflow.keras import optimizers
+from tensorflow.keras import Model, losses, optimizers
 from tensorflow.keras.utils import to_categorical
 from tensorflow.python.keras.callbacks import EarlyStopping, TerminateOnNaN
 
