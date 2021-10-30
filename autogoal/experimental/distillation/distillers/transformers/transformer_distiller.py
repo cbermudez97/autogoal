@@ -54,18 +54,11 @@ class BertEmbeddingDistiller(AlgorithmDistillerBase):
 
         distilled_model = alg_model
         distilled_tokenizer = alg_tokenizer
-        try:
-            model_name = alg_model.config.name_or_path
-            distilled_model_name = get_pre_trained_name(model_name)
-            if distilled_model_name:
-                distilled_model = get_pre_trained_model(distilled_model_name)
-                distilled_tokenizer = get_pre_trained_tokenizer(distilled_model_name)
-            else:
-                raise Exception("No pre-trained model found.")
-        except:
-            # TODO: Implement custom distillation process
-            pass
-
+        model_name = alg_model.config.name_or_path
+        distilled_model_name = get_pre_trained_name(model_name)
+        if distilled_model_name:
+            distilled_model = get_pre_trained_model(distilled_model_name)
+            distilled_tokenizer = get_pre_trained_tokenizer(distilled_model_name)
         distilled_algorithm = self.build_distilled(
             algorithm, distilled_model, distilled_tokenizer
         )
