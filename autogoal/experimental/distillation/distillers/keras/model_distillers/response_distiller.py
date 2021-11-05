@@ -3,6 +3,26 @@ from tensorflow.keras.activations import softmax
 
 
 class ResponseDistiller(DistillerBase):
+    def compile(
+        self,
+        optimizer,
+        metrics,
+        student_loss_fn,
+        distillation_loss_fn,
+        alpha=0.8,
+        temperature=1,
+        **kwargs
+    ):
+        super().compile(
+            optimizer,
+            metrics,
+            student_loss_fn,
+            distillation_loss_fn,
+            alpha=alpha,
+            **kwargs
+        )
+        self.temperature = temperature
+
     def calculate_distillation_loss(self, x, y):
         teacher_predictions = self.teacher_no_act(x, training=False)
         student_predictions_no_act = self.student_no_act(x, training=True)

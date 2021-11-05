@@ -23,7 +23,6 @@ class DistillerBase(Model, abc.ABC):
         student_loss_fn,
         distillation_loss_fn,
         alpha=0.8,
-        temperature=1,
         **kwargs,
     ):
         super(DistillerBase, self).compile(
@@ -32,7 +31,6 @@ class DistillerBase(Model, abc.ABC):
         self.student_loss_fn = student_loss_fn
         self.distillation_loss_fn = distillation_loss_fn
         self.alpha = alpha
-        self.temperature = temperature
 
     def train_step(self, data):
         x, y = data
