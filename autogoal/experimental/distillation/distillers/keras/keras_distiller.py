@@ -22,11 +22,10 @@ class _KerasDistiller(AlgorithmDistillerBase):
         self,
         epochs: int = 10,
         early_stop: int = 3,
-        compression_ratio: float = 0.5,
         distiller_alpha: float = 0.9,
         distiller_temperature: float = 1.0,
     ):
-        super().__init__(compression_ratio=compression_ratio)
+        super().__init__()
         self._epochs = epochs
         self._early_stop = early_stop
         self._distiller_alpha = distiller_alpha
