@@ -2,7 +2,7 @@ from typing import Dict, Type
 from .distiller_base import DistillerBase
 from .response_distiller import ResponseDistiller
 
-MODEL_DISTILLERS: Dict[str : Type[DistillerBase]] = {
+MODEL_DISTILLERS: Dict[str, Type[DistillerBase]] = {
     "hinton": ResponseDistiller,
 }
 DEFAULT_DISTILLER: Type[DistillerBase] = ResponseDistiller
