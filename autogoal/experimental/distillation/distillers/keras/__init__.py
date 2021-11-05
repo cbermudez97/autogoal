@@ -1,1 +1,1 @@
-from .keras_distiller import KerasDistiller
+from .response_keras_distiller import ResponseKerasDistiller

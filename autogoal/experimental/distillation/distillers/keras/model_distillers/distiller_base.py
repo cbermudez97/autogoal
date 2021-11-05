@@ -1,6 +1,5 @@
-from typing import Tuple
+import abc
 from tensorflow import GradientTape
-from tensorflow.keras.activations import softmax
 from tensorflow.keras import Model
 from tensorflow.keras import metrics
 from tensorflow.keras.models import clone_model
@@ -11,9 +10,9 @@ student_loss_metric = metrics.Mean(name="student_loss")
 distillation_loss_metric = metrics.Mean(name="distillation_loss_metrics")
 
 
-class _Distiller(Model):
+class DistillerBase(Model, abc.ABC):
     def __init__(self, student: Model, teacher: Model):
-        super(_Distiller, self).__init__()
+        super(DistillerBase, self).__init__()
         self.student, self.student_no_act = self.build_models(student)
         self.teacher, self.teacher_no_act = self.build_models(teacher)
 
@@ -27,7 +26,9 @@ class _Distiller(Model):
         temperature=1,
         **kwargs,
     ):
-        super(_Distiller, self).compile(optimizer=optimizer, metrics=metrics, **kwargs)
+        super(DistillerBase, self).compile(
+            optimizer=optimizer, metrics=metrics, **kwargs
+        )
         self.student_loss_fn = student_loss_fn
         self.distillation_loss_fn = distillation_loss_fn
         self.alpha = alpha
@@ -50,14 +51,9 @@ class _Distiller(Model):
         results = {m.name: m.result() for m in self.metrics}
         return results
 
+    @abc.abstractmethod
     def calculate_distillation_loss(self, x, y):
-        teacher_predictions = self.teacher_no_act(x, training=False)
-        student_predictions_no_act = self.student_no_act(x, training=True)
-        distillation_loss = self.alpha * self.distillation_loss_fn(
-            softmax(teacher_predictions / self.temperature, axis=1),
-            softmax(student_predictions_no_act / self.temperature, axis=1),
-        )
-        return distillation_loss
+        pass
 
     @property
     def metrics(self):

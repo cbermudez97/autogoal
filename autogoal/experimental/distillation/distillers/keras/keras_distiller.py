@@ -1,5 +1,5 @@
+import abc
 from typing import Any, Dict, List, Type
-
 from autogoal.grammar._graph import Graph
 from autogoal.contrib.keras import KerasClassifier
 from autogoal.experimental.distillation.compressors import find_compressors
@@ -10,14 +10,14 @@ from autogoal.experimental.distillation.distillers.base_distiller import (
     AlgorithmDistillerBase,
 )
 from autogoal.kb import AlgorithmBase
-from tensorflow.keras import Model, losses, optimizers
+from tensorflow.keras import Model
 from tensorflow.keras.utils import to_categorical
 from tensorflow.python.keras.callbacks import EarlyStopping, TerminateOnNaN
 
-from .distiller import _Distiller
+from .model_distillers import DistillerBase
 
 
-class KerasDistiller(AlgorithmDistillerBase):
+class _KerasDistiller(AlgorithmDistillerBase):
     def __init__(
         self,
         epochs: int = 10,
@@ -71,16 +71,8 @@ class KerasDistiller(AlgorithmDistillerBase):
                 continue
             try:
                 candidate_model = compressor.compress(teacher_model)
-                distiller = _Distiller(student=candidate_model, teacher=teacher_model)
+                distiller = self.build_distiller(candidate_model, teacher_model)
                 candidate_model = distiller.student
-                distiller.compile(
-                    optimizers.RMSprop(),
-                    ["accuracy"],
-                    losses.categorical_crossentropy,
-                    losses.categorical_crossentropy,
-                    alpha=self._distiller_alpha,
-                    temperature=self._distiller_temperature,
-                )
                 distiller.fit(
                     train_x,
                     train_y,
@@ -107,6 +99,12 @@ class KerasDistiller(AlgorithmDistillerBase):
             return self.build_keras_classifier_from(algorithm, compressed_model)
 
         return None
+
+    @abc.abstractmethod
+    def build_distiller(
+        self, student_model: Model, teacher_model: Model
+    ) -> DistillerBase:
+        pass
 
     def build_keras_classifier_from(
         self, original: KerasClassifier, new_model: Model
