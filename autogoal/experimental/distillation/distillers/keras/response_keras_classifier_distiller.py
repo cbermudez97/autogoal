@@ -1,13 +1,15 @@
 from tensorflow.keras import Model, losses, optimizers
-from .model_distillers import ResponseDistiller
-from .keras_distiller import _KerasDistiller
+from .model_distillers import ResponseClassifierDistiller
+from .keras_classifier_distiller import _KerasClassifierDistiller
 
 
-class ResponseKerasDistiller(_KerasDistiller):
+class ResponseKerasClassifierDistiller(_KerasClassifierDistiller):
     def build_distiller(
         self, student_model: Model, teacher_model: Model
-    ) -> ResponseDistiller:
-        distiller = ResponseDistiller(student=student_model, teacher=teacher_model)
+    ) -> ResponseClassifierDistiller:
+        distiller = ResponseClassifierDistiller(
+            student=student_model, teacher=teacher_model
+        )
         distiller.compile(
             optimizers.RMSprop(),
             ["accuracy"],

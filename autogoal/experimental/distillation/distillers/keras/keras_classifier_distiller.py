@@ -17,7 +17,7 @@ from tensorflow.python.keras.callbacks import EarlyStopping, TerminateOnNaN
 from .model_distillers import DistillerBase
 
 
-class _KerasDistiller(AlgorithmDistillerBase):
+class _KerasClassifierDistiller(AlgorithmDistillerBase):
     def __init__(
         self,
         epochs: int = 10,

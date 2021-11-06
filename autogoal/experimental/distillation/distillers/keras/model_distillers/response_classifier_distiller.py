@@ -2,7 +2,7 @@ from .distiller_base import DistillerBase
 from tensorflow.keras.activations import softmax
 
 
-class ResponseDistiller(DistillerBase):
+class ResponseClassifierDistiller(DistillerBase):
     def compile(
         self,
         optimizer,

@@ -1,9 +1,9 @@
 from typing import Dict, Type
 from .distiller_base import DistillerBase
-from .response_distiller import ResponseDistiller
+from .response_classifier_distiller import ResponseClassifierDistiller
 
 MODEL_DISTILLERS: Dict[str, Type[DistillerBase]] = {
-    "hinton": ResponseDistiller,
+    "hinton": ResponseClassifierDistiller,
 }
 DEFAULT_DISTILLER: Type[DistillerBase] = ResponseDistiller
 
