@@ -11,12 +11,14 @@ class RelationKerasClassifierDistiller(_KerasClassifierDistiller):
         distiller_alpha: float = 0.9,
         distiller_temperature: float = 1,
         delta: float = 1,
+        batch_size: int = 16,
     ):
         super().__init__(
             epochs=epochs,
             early_stop=early_stop,
             distiller_alpha=distiller_alpha,
             distiller_temperature=distiller_temperature,
+            batch_size=batch_size,
         )
         self.delta = delta
 

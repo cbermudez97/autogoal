@@ -3,6 +3,16 @@ import tensorflow as tf
 from .distiller_base import DistillerBase
 
 
+@tf.custom_gradient
+def norm(x, axis=None):
+    y = norm(x, axis=axis)
+
+    def grad(dy):
+        return dy * (x / (y + 1e-19))
+
+    return y, grad
+
+
 class RelationDistiller(DistillerBase):
     def compile(
         self,
@@ -41,7 +51,7 @@ class RelationDistiller(DistillerBase):
     def calcule_distance(self, y):
         distances = tf.map_fn(
             lambda yi: tf.map_fn(
-                lambda yj: tf.norm(yi - yj), y, fn_output_signature=y.dtype
+                lambda yj: norm(yi - yj), y, fn_output_signature=y.dtype
             ),
             y,
             fn_output_signature=y.dtype,
@@ -52,7 +62,7 @@ class RelationDistiller(DistillerBase):
 
     def calcule_angle(self, y):
         cosin = lambda yi, yj, yk: tf.tensordot(
-            (yi - yj) / tf.norm(yi - yj), (yk - yj) / tf.norm(yk - yj), 1
+            (yi - yj) / norm(yi - yj), (yk - yj) / norm(yk - yj), 1
         )
         angles = tf.map_fn(
             lambda yi: tf.map_fn(
