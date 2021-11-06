@@ -4,8 +4,8 @@ from .distiller_base import DistillerBase
 
 
 @tf.custom_gradient
-def norm(x, axis=None):
-    y = norm(x, axis=axis)
+def norm(x):
+    y = tf.norm(x)
 
     def grad(dy):
         return dy * (x / (y + 1e-19))
@@ -49,34 +49,26 @@ class RelationDistiller(DistillerBase):
         return distillation_loss
 
     def calcule_distance(self, y):
-        distances = tf.map_fn(
-            lambda yi: tf.map_fn(
-                lambda yj: norm(yi - yj), y, fn_output_signature=y.dtype
-            ),
-            y,
-            fn_output_signature=y.dtype,
-        )
-        plain_distances = tf.reshape(distances, (-1,))
-        mu = tf.reduce_mean(plain_distances)
-        return plain_distances / mu
+        item_shape = y.shape[1:]
+        N = tf.cast(tf.size(y) / tf.reduce_sum(item_shape), tf.int32)
+        y2 = tf.reshape(tf.repeat(y, N, axis=0), (N, -1, *item_shape))
+        y2t = tf.transpose(y2, perm=[1, 0, 2])
+        plain_y2 = tf.reshape(y2, (-1, *item_shape))
+        plain_y2t = tf.reshape(y2t, (-1, *item_shape))
+        distances = tf.map_fn(norm, plain_y2 - plain_y2t)
+        mu = tf.reduce_mean(distances)
+        distances = distances / mu
+        return distances
 
     def calcule_angle(self, y):
         cosin = lambda yi, yj, yk: tf.tensordot(
-            (yi - yj) / norm(yi - yj), (yk - yj) / norm(yk - yj), 1
+            (yi - yj) / (norm(yi - yj) + 1e-19), (yk - yj) / (norm(yk - yj) + 1e-19), 1
         )
         angles = tf.map_fn(
             lambda yi: tf.map_fn(
-                lambda yj: tf.map_fn(
-                    lambda yk: cosin(yi, yj, yk), y, fn_output_signature=y.dtype
-                ),
-                y,
-                fn_output_signature=y.dtype,
+                lambda yj: tf.map_fn(lambda yk: cosin(yi, yj, yk), y,), y,
             ),
             y,
-            fn_output_signature=y.dtype,
         )
         plain_angles = tf.reshape(angles, (-1,))
-        no_nan_angles = tf.where(
-            tf.math.is_nan(plain_angles), tf.zeros_like(plain_angles), plain_angles,
-        )
-        return no_nan_angles
+        return plain_angles
