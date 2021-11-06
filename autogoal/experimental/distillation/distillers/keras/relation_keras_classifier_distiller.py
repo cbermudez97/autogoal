@@ -10,6 +10,7 @@ class RelationKerasClassifierDistiller(_KerasClassifierDistiller):
         early_stop: int = 3,
         distiller_alpha: float = 0.9,
         distiller_temperature: float = 1,
+        distiller_psi: str = "angle",
         delta: float = 1,
         batch_size: int = 8,
     ):
@@ -21,6 +22,7 @@ class RelationKerasClassifierDistiller(_KerasClassifierDistiller):
             batch_size=batch_size,
         )
         self.delta = delta
+        self._distiller_psi = distiller_psi
 
     def build_distiller(
         self, student_model: Model, teacher_model: Model
