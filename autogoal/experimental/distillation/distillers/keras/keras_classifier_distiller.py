@@ -19,17 +19,12 @@ from .model_distillers import DistillerBase
 
 class _KerasClassifierDistiller(AlgorithmDistillerBase):
     def __init__(
-        self,
-        epochs: int = 10,
-        early_stop: int = 3,
-        distiller_alpha: float = 0.9,
-        distiller_temperature: float = 1.0,
+        self, epochs: int = 10, early_stop: int = 3, distiller_alpha: float = 0.9,
     ):
         super().__init__()
         self._epochs = epochs
         self._early_stop = early_stop
         self._distiller_alpha = distiller_alpha
-        self._distiller_temperature = distiller_temperature
 
     def can_distill(self, algorithm: AlgorithmBase) -> bool:
         return isinstance(algorithm, KerasClassifier)

@@ -30,6 +30,5 @@ class RelationKerasClassifierDistiller(_KerasClassifierDistiller):
             losses.categorical_crossentropy,
             losses.Huber(delta=self.delta),
             alpha=self._distiller_alpha,
-            temperature=self._distiller_temperature,
         )
         return distiller
