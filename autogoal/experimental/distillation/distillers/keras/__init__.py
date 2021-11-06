@@ -1,1 +1,2 @@
 from .response_keras_classifier_distiller import ResponseKerasClassifierDistiller
+from .relation_keras_classifier_distiller import RelationKerasClassifierDistiller
