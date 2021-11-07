@@ -6,8 +6,8 @@ from tensorflow.keras.models import clone_model
 from tensorflow.keras.layers import Activation
 
 loss_metric = metrics.Mean(name="loss")
-student_loss_metric = metrics.Mean(name="student_loss")
-distillation_loss_metric = metrics.Mean(name="distillation_loss_metrics")
+student_loss_metric = metrics.Mean(name="task_loss")
+distillation_loss_metric = metrics.Mean(name="distillation_loss")
 
 
 class DistillerBase(Model, abc.ABC):
