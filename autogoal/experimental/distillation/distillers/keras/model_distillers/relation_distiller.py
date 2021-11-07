@@ -61,14 +61,19 @@ class RelationDistiller(DistillerBase):
         return distances
 
     def calcule_angle(self, y):
-        cosin = lambda yi, yj, yk: tf.tensordot(
-            (yi - yj) / (norm(yi - yj) + 1e-19), (yk - yj) / (norm(yk - yj) + 1e-19), 1
-        )
-        angles = tf.map_fn(
-            lambda yi: tf.map_fn(
-                lambda yj: tf.map_fn(lambda yk: cosin(yi, yj, yk), y,), y,
-            ),
-            y,
-        )
-        plain_angles = tf.reshape(angles, (-1,))
-        return plain_angles
+        item_shape = y.shape[1:]
+        N = tf.cast(tf.size(y) / tf.reduce_sum(item_shape), tf.int32)
+        tN1 = tf.stack([(N), tf.constant(1)], 0)
+        tN2 = tf.stack([N ** 2, tf.constant(1)], 0)
+        yi = tf.repeat(y, N ** 2, 0)
+        yj_part = tf.repeat(y, N, 0)
+        yj = tf.tile(yj_part, tN1,)
+        yk = tf.tile(y, tN2)
+        difij = yi - yj
+        ndifij = tf.map_fn(norm, difij) + 1e-19
+        eij = difij / tf.expand_dims(ndifij, 1)
+        difkj = yk - yj
+        ndifkj = tf.map_fn(norm, difkj) + 1e-19
+        ekj = difkj / tf.expand_dims(ndifkj, 1)
+        angles = tf.reduce_sum(eij * ekj, 1)
+        return angles
