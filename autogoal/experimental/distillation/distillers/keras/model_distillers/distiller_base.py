@@ -6,7 +6,7 @@ from tensorflow.keras.models import clone_model
 from tensorflow.keras.layers import Activation
 
 loss_metric = metrics.Mean(name="loss")
-student_loss_metric = metrics.Mean(name="task_loss")
+task_loss_metric = metrics.Mean(name="task_loss")
 distillation_loss_metric = metrics.Mean(name="distillation_loss")
 
 
@@ -20,7 +20,7 @@ class DistillerBase(Model, abc.ABC):
         self,
         optimizer,
         metrics,
-        student_loss_fn,
+        task_loss_fn,
         distillation_loss_fn,
         alpha=0.8,
         **kwargs,
@@ -28,7 +28,7 @@ class DistillerBase(Model, abc.ABC):
         super(DistillerBase, self).compile(
             optimizer=optimizer, metrics=metrics, **kwargs
         )
-        self.student_loss_fn = student_loss_fn
+        self.task_loss_fn = task_loss_fn
         self.distillation_loss_fn = distillation_loss_fn
         self.alpha = alpha
 
@@ -36,7 +36,7 @@ class DistillerBase(Model, abc.ABC):
         x, y = data
         with GradientTape() as tape:
             student_predictions = self.student(x, training=True)
-            student_loss = self.student_loss_fn(y, student_predictions)
+            student_loss = self.task_loss_fn(y, student_predictions)
             distillation_loss = self.calculate_distillation_loss(x, y)
             loss = student_loss + distillation_loss
         trainable_vars = self.student.trainable_variables
@@ -44,7 +44,7 @@ class DistillerBase(Model, abc.ABC):
         self.optimizer.apply_gradients(zip(gradients, trainable_vars))
         self.compiled_metrics.update_state(y, student_predictions)
         loss_metric.update_state(loss)
-        student_loss_metric.update_state(student_loss)
+        task_loss_metric.update_state(student_loss)
         distillation_loss_metric.update_state(distillation_loss)
         results = {m.name: m.result() for m in self.metrics}
         return results
@@ -57,17 +57,17 @@ class DistillerBase(Model, abc.ABC):
     def metrics(self):
         return self.compiled_metrics.metrics + [
             loss_metric,
-            student_loss_metric,
+            task_loss_metric,
             distillation_loss_metric,
         ]
 
     def test_step(self, data):
         x, y = data
         y_prediction = self.student(x, training=False)
-        student_loss = self.student_loss_fn(y, y_prediction)
+        student_loss = self.task_loss_fn(y, y_prediction)
         self.compiled_metrics.update_state(y, y_prediction)
         loss_metric.update_state(student_loss)
-        student_loss_metric.update_state(student_loss)
+        task_loss_metric.update_state(student_loss)
         results = {m.name: m.result() for m in self.metrics}
         return results
 

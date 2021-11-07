@@ -7,7 +7,7 @@ class ResponseClassifierDistiller(DistillerBase):
         self,
         optimizer,
         metrics,
-        student_loss_fn,
+        task_loss_fn,
         distillation_loss_fn,
         alpha=0.8,
         temperature=1,
@@ -16,7 +16,7 @@ class ResponseClassifierDistiller(DistillerBase):
         super().compile(
             optimizer,
             metrics,
-            student_loss_fn,
+            task_loss_fn,
             distillation_loss_fn,
             alpha=alpha,
             **kwargs

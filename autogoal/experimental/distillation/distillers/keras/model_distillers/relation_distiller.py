@@ -18,7 +18,7 @@ class RelationDistiller(DistillerBase):
         self,
         optimizer,
         metrics,
-        student_loss_fn,
+        task_loss_fn,
         distillation_loss_fn,
         alpha=0.8,
         psi="angle",
@@ -27,7 +27,7 @@ class RelationDistiller(DistillerBase):
         super().compile(
             optimizer,
             metrics,
-            student_loss_fn,
+            task_loss_fn,
             distillation_loss_fn,
             alpha=alpha,
             **kwargs
