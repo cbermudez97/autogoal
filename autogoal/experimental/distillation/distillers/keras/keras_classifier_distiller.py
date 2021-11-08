@@ -9,12 +9,13 @@ from autogoal.experimental.distillation.compressors.base_compressor import (
 from autogoal.experimental.distillation.distillers.base_distiller import (
     AlgorithmDistillerBase,
 )
+from autogoal.experimental.distillation.distillers.keras.model_distillers import (
+    DistillerBase,
+)
 from autogoal.kb import AlgorithmBase
 from tensorflow.keras import Model
 from tensorflow.keras.utils import to_categorical
 from tensorflow.python.keras.callbacks import EarlyStopping, TerminateOnNaN
-
-from .model_distillers import DistillerBase
 
 
 class _KerasClassifierDistiller(AlgorithmDistillerBase):
@@ -32,7 +33,7 @@ class _KerasClassifierDistiller(AlgorithmDistillerBase):
         self._distiller_batch_size = batch_size
 
     def can_distill(self, algorithm: AlgorithmBase) -> bool:
-        return isinstance(algorithm, KerasClassifier)
+        return algorithm.__class__ == KerasClassifier
 
     def distill(
         self,
