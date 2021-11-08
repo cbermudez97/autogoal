@@ -29,7 +29,7 @@ class RelationKerasClassifierDistiller(_KerasClassifierDistiller):
     ) -> RelationDistiller:
         distiller = RelationDistiller(student=student_model, teacher=teacher_model)
         distiller.compile(
-            optimizers.RMSprop(),
+            teacher_model.optimizer,
             ["accuracy"],
             losses.categorical_crossentropy,
             losses.Huber(delta=self.delta),
