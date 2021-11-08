@@ -116,8 +116,8 @@ class _KerasClassifierDistiller(AlgorithmDistillerBase):
         classifier._inverse_classes = original._inverse_classes
         classifier.eval()
         graph: Graph = Graph()
-        if not classifier._graph is None:
-            original_order = classifier._graph.build_order()
+        if not original._graph is None:
+            original_order = original._graph.build_order()
             nodes = []
             for layer, _ in original_order:
                 nodes.insert(0, new_model.get_layer(name=layer.name))
