@@ -1,6 +1,10 @@
 from tensorflow.keras import Model, losses, optimizers
-from .model_distillers import ResponseClassifierDistiller
-from .keras_classifier_distiller import _KerasClassifierDistiller
+from autogoal.experimental.distillation.distillers.keras.model_distillers import (
+    ResponseClassifierDistiller,
+)
+from autogoal.experimental.distillation.distillers.keras.keras_classifier_distiller import (
+    _KerasClassifierDistiller,
+)
 
 
 class ResponseKerasClassifierDistiller(_KerasClassifierDistiller):

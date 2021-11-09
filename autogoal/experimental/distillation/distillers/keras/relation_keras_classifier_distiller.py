@@ -1,6 +1,10 @@
 from tensorflow.keras import Model, losses, optimizers
-from .model_distillers import RelationDistiller
-from .keras_classifier_distiller import _KerasClassifierDistiller
+from autogoal.experimental.distillation.distillers.keras.model_distillers import (
+    RelationDistiller,
+)
+from autogoal.experimental.distillation.distillers.keras.keras_classifier_distiller import (
+    _KerasClassifierDistiller,
+)
 
 
 class RelationKerasClassifierDistiller(_KerasClassifierDistiller):
