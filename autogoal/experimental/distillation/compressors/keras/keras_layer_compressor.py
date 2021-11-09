@@ -57,14 +57,14 @@ class _KerasLayerCompressor:
     def compress(self, layer: AutoGOALConv1D):
         config = layer.get_config()
         l2r = min(int(log2(self.ratio)), -1)
-        config["filter"] += l2r
+        config["filters"] += l2r
         return layer.__class__.from_config(config)
 
     @dispatcher.when(AutoGOALConv2D)
     def compress(self, layer: AutoGOALConv2D):
         config = layer.get_config()
         l2r = min(int(log2(self.ratio)), -1)
-        config["filter"] += l2r
+        config["filters"] += l2r
         return layer.__class__.from_config(config)
 
     @dispatcher.when(Layer)
