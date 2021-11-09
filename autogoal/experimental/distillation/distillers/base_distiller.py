@@ -18,7 +18,7 @@ class AlgorithmDistillerBase(abc.ABC):
         algorithm: AlgorithmBase,
         train_inputs: dict,
         test_inputs: dict,
-        registry: List,
+        registry: List[Type[ModelCompressorBase]],
         compressors_kwargs: Dict[Type[ModelCompressorBase], Dict[str, Any]] = {},
     ) -> AlgorithmBase:
         pass
