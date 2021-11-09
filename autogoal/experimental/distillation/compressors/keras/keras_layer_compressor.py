@@ -1,5 +1,9 @@
 from typing import Callable
-from numpy.lib.function_base import disp
+from numpy import log2
+from autogoal.contrib.keras._generated import (
+    Conv1D as AutoGOALConv1D,
+    Conv2D as AutoGOALConv2D,
+)
 from tensorflow.keras.layers import (
     Layer,
     Conv1D,
@@ -29,6 +33,8 @@ from .utils import dispatcher
 
 class _KerasLayerCompressor:
     def __init__(self, compression_ratio: float = 0.5):
+        if compression_ratio <= 0 or compression_ratio > 1:
+            raise ValueError("Param 'compression_ratio' must be in the interval (0,1]")
         self.ratio = compression_ratio
 
     def __call__(self, is_output: Callable = lambda x: False):
@@ -46,6 +52,20 @@ class _KerasLayerCompressor:
     @dispatcher.on("layer")
     def compress(self, layer: Layer):
         pass
+
+    @dispatcher.when(AutoGOALConv1D)
+    def compress(self, layer: AutoGOALConv1D):
+        config = layer.get_config()
+        l2r = min(int(log2(self.ratio)), -1)
+        config["filter"] += l2r
+        return layer.__class__.from_config(config)
+
+    @dispatcher.when(AutoGOALConv2D)
+    def compress(self, layer: AutoGOALConv2D):
+        config = layer.get_config()
+        l2r = min(int(log2(self.ratio)), -1)
+        config["filter"] += l2r
+        return layer.__class__.from_config(config)
 
     @dispatcher.when(Layer)
     def compress(self, layer: Layer):
