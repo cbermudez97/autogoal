@@ -16,6 +16,9 @@ class DistillerBase(Model, abc.ABC):
         self.student, self.student_no_act = self.build_models(student)
         self.teacher, self.teacher_no_act = self.build_models(teacher)
 
+    def __call__(self, *args, **kwargs):
+        return self.student(*args, **kwargs)
+
     def compile(
         self,
         optimizer,
