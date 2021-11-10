@@ -9,7 +9,7 @@ class ResponseClassifierDistiller(DistillerBase):
         metrics,
         task_loss_fn,
         distillation_loss_fn,
-        alpha=0.8,
+        alpha=0.9,
         temperature=1,
         **kwargs
     ):
