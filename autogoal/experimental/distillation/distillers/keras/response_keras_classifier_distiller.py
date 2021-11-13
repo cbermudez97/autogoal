@@ -14,9 +14,15 @@ class ResponseKerasClassifierDistiller(_KerasClassifierDistiller):
         early_stop: int = 3,
         distiller_alpha: float = 0.9,
         distiller_temperature: float = 1,
+        batch_size: int = 32,
+        verbose: bool = False,
     ):
         super().__init__(
-            epochs=epochs, early_stop=early_stop, distiller_alpha=distiller_alpha
+            epochs=epochs,
+            early_stop=early_stop,
+            distiller_alpha=distiller_alpha,
+            batch_size=batch_size,
+            verbose=verbose,
         )
         self._distiller_temperature = distiller_temperature
 

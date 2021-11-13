@@ -16,12 +16,14 @@ class RelationKerasClassifierDistiller(_KerasClassifierDistiller):
         distiller_psi: str = "angle",
         delta: float = 1,
         batch_size: int = 8,
+        verbose: bool = False,
     ):
         super().__init__(
             epochs=epochs,
             early_stop=early_stop,
             distiller_alpha=distiller_alpha,
             batch_size=batch_size,
+            verbose=verbose,
         )
         self.delta = delta
         self._distiller_psi = distiller_psi
