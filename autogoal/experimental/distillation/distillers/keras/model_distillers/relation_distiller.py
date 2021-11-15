@@ -24,17 +24,12 @@ class RelationDistiller(DistillerBase):
         psi="angle",
         **kwargs
     ):
-        super().compile(
-            optimizer,
-            metrics,
-            task_loss_fn,
-            distillation_loss_fn,
-            alpha=alpha,
-            **kwargs
-        )
+        super().compile(optimizer, metrics, task_loss_fn, **kwargs)
         if not psi in ["distance", "angle"]:
             raise ValueError('Invalid param "psi".')
         self.psi = psi
+        self.distillation_loss_fn = distillation_loss_fn
+        self.alpha=alpha
 
     def calculate_distillation_loss(self, x, y):
         teacher_predictions = self.teacher_no_act(x, training=False)

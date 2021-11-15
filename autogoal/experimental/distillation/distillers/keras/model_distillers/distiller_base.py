@@ -20,20 +20,12 @@ class DistillerBase(Model, abc.ABC):
         return self.student(*args, **kwargs)
 
     def compile(
-        self,
-        optimizer,
-        metrics,
-        task_loss_fn,
-        distillation_loss_fn,
-        alpha=0.9,
-        **kwargs,
+        self, optimizer, metrics, task_loss_fn, **kwargs,
     ):
         super(DistillerBase, self).compile(
             optimizer=optimizer, metrics=metrics, **kwargs
         )
         self.task_loss_fn = task_loss_fn
-        self.distillation_loss_fn = distillation_loss_fn
-        self.alpha = alpha
 
     def train_step(self, data):
         x, y = data
