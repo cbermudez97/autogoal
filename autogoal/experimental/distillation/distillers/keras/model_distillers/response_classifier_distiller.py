@@ -13,7 +13,7 @@ class ResponseClassifierDistiller(DistillerBase):
         temperature=1,
         **kwargs
     ):
-        super().compile(optimizer, metrics, task_loss_fn, alpha=alpha, **kwargs)
+        super().compile(optimizer, metrics, task_loss_fn, **kwargs)
         self.temperature = temperature
         self.distillation_loss_fn = distillation_loss_fn
         self.alpha = alpha
