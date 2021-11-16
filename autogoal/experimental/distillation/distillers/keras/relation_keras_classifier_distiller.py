@@ -25,7 +25,7 @@ class RelationKerasClassifierDistiller(_KerasClassifierDistiller):
             batch_size=batch_size,
             verbose=verbose,
         )
-        self.delta = delta
+        self._distiller_delta = delta
         self._distiller_psi = distiller_psi
 
     def build_distiller(
@@ -36,7 +36,7 @@ class RelationKerasClassifierDistiller(_KerasClassifierDistiller):
             teacher_model.optimizer,
             ["accuracy"],
             losses.categorical_crossentropy,
-            losses.Huber(delta=self.delta),
+            losses.Huber(delta=self._distiller_delta),
             alpha=self._distiller_alpha,
         )
         return distiller
