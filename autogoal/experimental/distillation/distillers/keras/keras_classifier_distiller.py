@@ -25,12 +25,14 @@ class _KerasClassifierDistiller(AlgorithmDistillerBase):
         early_stop: int = 3,
         distiller_alpha: float = 0.9,
         batch_size: int = 32,
+        verbose: bool = False,
     ):
         super().__init__()
         self._epochs = epochs
         self._early_stop = early_stop
         self._distiller_alpha = distiller_alpha
         self._distiller_batch_size = batch_size
+        self._distiller_verbose = verbose
 
     def can_distill(self, algorithm: AlgorithmBase) -> bool:
         return algorithm.__class__ == KerasClassifier
@@ -77,6 +79,7 @@ class _KerasClassifierDistiller(AlgorithmDistillerBase):
                     train_x,
                     train_y,
                     epochs=self._epochs,
+                    batch_size=self._distiller_batch_size,
                     callbacks=[
                         EarlyStopping(
                             monitor="loss",
@@ -85,7 +88,7 @@ class _KerasClassifierDistiller(AlgorithmDistillerBase):
                         ),
                         TerminateOnNaN(),
                     ],
-                    verbose=0,
+                    verbose=self._distiller_verbose,
                 )
                 candidate_score, _, _, _ = distiller.evaluate(
                     test_x, test_y, verbose=0,
